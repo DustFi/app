@@ -11,7 +11,7 @@ import {
 /**
  * Initializes the application and configures its dependencies.
  */
-export function init(debug: boolean): void {
+export async function init(debug: boolean): Promise<void> {
   // Set @telegram-apps/sdk-react debug mode.
   $debug.set(debug);
 
@@ -29,6 +29,7 @@ export function init(debug: boolean): void {
   });
 
   // Define components-related CSS variables.
+  await viewport.mount();
   viewport.bindCssVars();
   miniApp.bindCssVars();
   themeParams.bindCssVars();
