@@ -4,11 +4,11 @@ export const TON_CONNECT_UI_PREFERENCES = {
 };
 
 export const TON_CONNECT_MANIFEST = {
-    "url": "https://dustfi.xyz",
+    "url": "https://decenlabs.com",
     "name": "DustFi",
-    "iconUrl": "https://dustfi.xyz/manifest/Logo.jpg?v=2",
-    "termsOfUseUrl": "https://dustfi.xyz/manifest/terms-of-use.txt",
-    "privacyPolicyUrl": "https://dustfi.xyz/manifest/privacy-policy.txt"
+    "iconUrl": "https://decenlabs.com/wp-content/uploads/2024/11/dustfi.png",
+    "termsOfUseUrl": "https://decenlabs.com/privacy-policy/",
+    "privacyPolicyUrl": "https://decenlabs.com/privacy-policy/"
 }
 export const langs = [
     {

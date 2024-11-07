@@ -121,12 +121,14 @@ const Navbar = () => {
 						)}
 						{!isDesktop && <MobileMenu isOpen={mobileMenu} />}
 					</div>
-					<TonConnectButton className="ton-connect-page__button" />
+					<div className="bg-white text-white">
+						<TonConnectButton className="ton-connect-page__button" style={{ background: "black" }} />
+					</div>
 				</div>
 
 				<button onClick={toggleMenu} className="md:hidden">
 					<AiOutlineMenu size={24} />
-					<TonConnectButton className="ton-connect-page__button" />
+					{/* <TonConnectButton className="ton-connect-page__button"   style={{ background: "#000000" }} /> */}
 
 				</button>
 
@@ -169,10 +171,6 @@ const Navbar = () => {
 							header="TON Connect"
 							description={
 								<>
-									<Text>
-										To display the data related to the TON Connect, it is required
-										to connect your wallet
-									</Text>
 									<TonConnectButton className="ton-connect-page__button" />
 								</>
 							}
