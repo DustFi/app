@@ -15,9 +15,8 @@ export async function main() {
         throw new Error("Environment variable JETTON_ADDRESS is required.");
     }
 
-    // const jettonAddress = process.env.NEXT_PUBLIC_JETTON_ADDRESS as unknown as Address;
-    const jettonAddress = Address.parse('EQBlqsm144Dq6SjbPI4jjZvA1hqTIP3CvHovbIfW_t-SCALE');
-
+    const jettonAddress = Address.parse(process.env.NEXT_PUBLIC_JETTON_ADDRESS as string);
+    const jettonAddress2 = Address.parse('EQBlqsm144Dq6SjbPI4jjZvA1hqTIP3CvHovbIfW_t-SCALE');
 
     const tonClient = new TonClient4({
         endpoint: "https://mainnet-v4.tonhubapi.com",
@@ -37,14 +36,22 @@ export async function main() {
         }),
     );
 
+    const wallet2 = tonClient.open(
+        WalletContractV3R2.create({
+            workchain: 0,
+            walletId: '0QB_r4q5cXgZix4vZ3aidkpdHAhXac9XySXQpUoRDRo5dDjE'
+        }),
+    );
+
 
     const sender = wallet.sender(keys.secretKey);
     console.log("Wallet", wallet, "Sender", sender);
 
     try {
         console.log("jettonAddress:", jettonAddress);
-
+        console.log("jettonAddress2:", jettonAddress2);
         const asset = Asset.jetton(jettonAddress);
+
         console.log("Asset:", asset);
         // await factory.sendCreateVault(sender, { asset });
         const response = await factory.sendCreateVault(sender, { asset });
@@ -52,5 +59,4 @@ export async function main() {
     } catch (error) {
         console.error('Error creating vault:', error);
     }
-    console.log("Vault created successfully!");
 }

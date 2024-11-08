@@ -21,7 +21,7 @@ import { IoClose, IoLanguage } from "react-icons/io5";
 import { FiMenu } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useTheme } from "@/stores/theme";
+import { useTheme } from "@/store/theme";
 import { Section, Cell, List } from '@telegram-apps/telegram-ui';
 import { useTranslations } from 'next-intl';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher/LocaleSwitcher';
