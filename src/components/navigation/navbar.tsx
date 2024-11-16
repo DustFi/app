@@ -64,6 +64,32 @@ const Navbar = () => {
 					</div>
 				</Link>
 
+				<div className="flex-1 flex justify-center">
+					{/* <button
+						onClick={() => router.push("/dashboard")}
+						className="flex items-center space-x-2 hover:text-gray-300 px-3"
+					>
+						{/* <CgProfile className="text-2xl" /> */}
+					{/* <span>Dashboard</span>
+					</button> */}
+					<Link href="/swap" >
+						<div className="text-white hover:text-gray-300 px-3">Spot</div>
+					</Link>
+					<Link href="/vault" >
+						<div className="text-white hover:text-gray-300 px-3"> Vault</div>
+					</Link>
+					<Link href="/vault" >
+						<div className="text-white hover:text-gray-300 px-3"> Pool</div>
+					</Link>
+					<Link href="/dashboard" >
+						<div className="text-white hover:text-gray-300 px-3">Dashboard</div>
+					</Link>
+					{/* <Link href="https://docs.dustfi.xyz" >
+						<div className="text-white hover:text-gray-300 px-3">Docs</div>
+					</Link> */}
+
+				</div>
+
 				<div className="hidden md:flex items-center space-x-4">
 					{/* <div className="relative flex flex-1 mx-[0.8rem] items-center bg-[#363840] rounded-[0.8rem] hover:bg-[#4c505c] ">
 						<input
@@ -81,13 +107,16 @@ const Navbar = () => {
 						</button>
 					</div> */}
 
-					<button
+					{/* <button
 						onClick={() => router.push("/dashboard")}
 						className="flex items-center space-x-2 hover:text-gray-300 px-3"
 					>
 						<CgProfile className="text-2xl" />
 						<span>Dashboard</span>
-					</button>
+					</button> */}
+
+					{/* Center Section: Dashboard Button */}
+
 
 					<div className="max-w-screen-md dark:text-white flex items-center h-full gap-2">
 						{isDesktop && (
@@ -206,7 +235,7 @@ const MobileMenu = ({ isOpen }: { isOpen: boolean }) => {
 				<li>
 					<Link
 						href="https://docs.dustfi.xyz"
-						target="_blank"
+						
 						data-testid="docs-link-mobile"
 					>
 						{t("docs")}

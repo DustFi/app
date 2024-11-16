@@ -22,6 +22,7 @@ import './styles.css';
 
 function RootInner({ children }: PropsWithChildren) {
   const isDev = process.env.NODE_ENV === 'development';
+  const TON_CONNECT_MANIFEST = "https://decenlabs.com/manifest.json";
 
   // Mock Telegram environment in development mode if needed.
   if (isDev) {
@@ -51,7 +52,7 @@ function RootInner({ children }: PropsWithChildren) {
   }, [debug]);
 
   return (
-    <TonConnectUIProvider manifestUrl="/tonconnect-manifest.json">
+    <TonConnectUIProvider manifestUrl={TON_CONNECT_MANIFEST}>
       <AppRoot
         appearance={isDark ? 'dark' : 'light'}
         platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}

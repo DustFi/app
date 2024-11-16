@@ -3,13 +3,9 @@ export const TON_CONNECT_UI_PREFERENCES = {
     disable_provided_text: true,
 };
 
-export const TON_CONNECT_MANIFEST = {
-    "url": "https://decenlabs.com",
-    "name": "DustFi",
-    "iconUrl": "https://decenlabs.com/wp-content/uploads/2024/11/dustfi.png",
-    "termsOfUseUrl": "https://decenlabs.com/privacy-policy/",
-    "privacyPolicyUrl": "https://decenlabs.com/privacy-policy/"
-}
+// export const TON_CONNECT_MANIFEST = "https://mytonswap.com/wallet/manifest.json";
+
+export const TON_CONNECT_MANIFEST = "https://decenlabs.com/manifest.json";
 export const langs = [
     {
         label: "English",

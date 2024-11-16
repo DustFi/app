@@ -1,5 +1,4 @@
-"use client";   
-import { Factory, Asset, PoolType, ReadinessStatus, TonClient } from '@dedust/sdk';
+"use client";
 import { useTonAddress } from '@tonconnect/ui-react';
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,13 +7,17 @@ import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { tonClient, factory } from '@/lib/dedust';
+import { Address } from "@ton/ton";
+import { mnemonicToPrivateKey } from "@ton/crypto";
+import { Factory, Asset, PoolType, ReadinessStatus, MAINNET_FACTORY_ADDR } from '@dedust/sdk';
+
 
 interface CreateFormProps {
-    tonClient: TonClient;
+    tonClient: any;
     factory: Factory;
 }
 
-export const CreateForm: React.FC<CreateFormProps> = ({ tonClient, factory }) => {
+const CreateForm: React.FC<CreateFormProps> = ({ tonClient, factory }) => {
     const userFriendlyAddress = useTonAddress();
     const rawAddress = useTonAddress(false);
     const [jettonAddress, setJettonAddress] = useState('');
@@ -23,16 +26,25 @@ export const CreateForm: React.FC<CreateFormProps> = ({ tonClient, factory }) =>
         message: ''
     });
     const [isLoading, setIsLoading] = useState(false);
+    console.log("ton client", tonClient, "factory", factory);
 
     const createVault = async () => {
         try {
             setIsLoading(true);
-            await factory.sendCreateVault(rawAddress, {
+            console.log("raw address", rawAddress, "jetton address", jettonAddress, "userFriendlyAddress", userFriendlyAddress);
+            // const amountBigInt = BigInt(parseFloat(amount) * 1e9);
+            const jettonAdd = Address.parse(jettonAddress);
+            console.log("jettonAdd", jettonAdd);
+
+            await factory.sendCreateVault(tonClient, userFriendlyAddress, {
+                queryId: BigInt(Date.now()), // Optional: use current timestamp as queryId
                 asset: Asset.jetton(jettonAddress),
             });
             setStatus({ type: 'success', message: 'Vault created successfully!' });
+            console.log("vault created");
         } catch (error: any) {
             setStatus({ type: 'error', message: error.message });
+            console.log("vault error", error);
         } finally {
             setIsLoading(false);
         }
@@ -44,17 +56,20 @@ export const CreateForm: React.FC<CreateFormProps> = ({ tonClient, factory }) =>
             const TON = Asset.native();
             const SCALE = Asset.jetton(jettonAddress);
 
+            console.log("ton", TON, "scale", SCALE);
             const pool = tonClient.open(
                 await factory.getPool(PoolType.VOLATILE, [TON, SCALE])
             );
+            console.log("pool", pool);
 
             const poolReadiness = await pool.getReadinessStatus();
 
             if (poolReadiness === ReadinessStatus.NOT_DEPLOYED) {
-                await factory.sendCreateVolatilePool(rawAddress, {
+                await factory.sendCreateVolatilePool(userFriendlyAddress, {
                     assets: [TON, SCALE],
                 });
                 setStatus({ type: 'success', message: 'Pool created successfully!' });
+                console.log("pool created");
             } else {
                 setStatus({ type: 'error', message: 'Pool already exists' });
             }
@@ -94,7 +109,7 @@ export const CreateForm: React.FC<CreateFormProps> = ({ tonClient, factory }) =>
                             </div>
                             <Button
                                 onClick={createVault}
-                                disabled={isLoading || !jettonAddress || !rawAddress}
+                                disabled={isLoading || !jettonAddress || !userFriendlyAddress}
                                 className="w-full"
                             >
                                 {isLoading ? 'Creating...' : 'Create Vault'}
@@ -120,7 +135,7 @@ export const CreateForm: React.FC<CreateFormProps> = ({ tonClient, factory }) =>
                             </div>
                             <Button
                                 onClick={createPool}
-                                disabled={isLoading || !jettonAddress || !rawAddress}
+                                disabled={isLoading || !jettonAddress || !userFriendlyAddress}
                                 className="w-full"
                             >
                                 {isLoading ? 'Creating...' : 'Create Pool'}
@@ -131,7 +146,7 @@ export const CreateForm: React.FC<CreateFormProps> = ({ tonClient, factory }) =>
             </Tabs>
 
             {status.type && (
-                <Alert className={`mt-4 ${status.type === 'error' ? 'bg-red-50' : 'bg-green-50'}`}>
+                <Alert className={`mt-4 text-black ${status.type === 'error' ? 'bg-red-50' : 'bg-green-50'}`}>
                     <AlertDescription>
                         {status.message}
                     </AlertDescription>
@@ -144,7 +159,7 @@ export const CreateForm: React.FC<CreateFormProps> = ({ tonClient, factory }) =>
 // page.tsx
 export default function CreatePage() {
     return (
-        <div className="min-h-screen bg-black py-8">
+        <div className="min-h-screen py-8">
             <h1 className="text-3xl font-bold text-center mb-8">Create Vault or Pool</h1>
             <CreateForm
                 tonClient={tonClient}
