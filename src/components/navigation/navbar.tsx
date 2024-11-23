@@ -75,6 +75,9 @@ const Navbar = () => {
 					<Link href="/swap" >
 						<div className="text-white hover:text-gray-300 px-3">Spot</div>
 					</Link>
+					<Link href="/scale" >
+						<div className="text-white hover:text-gray-300 px-3">Scale</div>
+					</Link>
 					<Link href="/vault" >
 						<div className="text-white hover:text-gray-300 px-3"> Vault</div>
 					</Link>

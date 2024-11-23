@@ -27,6 +27,7 @@
     "dotenv": "^16.4.5",
     "eruda": "^3.0.1",
     "framer-motion": "^11.11.17",
+    "fs": "0.0.1-security",
     "jotai": "^2.9.0",
     "localforage": "^1.10.0",
     "lucide-react": "^0.460.0",

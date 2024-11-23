@@ -1,8 +1,8 @@
 import axios from "axios";
-import { WIDGET_VERSION } from "../constants";
+import { WIDGET_VERSION } from "@/constants";
 import toast from "react-hot-toast";
-import { useSwapStore } from "../store/swap.store";
-import { useWalletStore } from "../store/wallet.store";
+import { useSwapStore } from "@/store/useSwapStore";
+import { useWalletStore } from "@/store/useWalletStore";
 import { httpClient } from "./httpClient";
 
 interface ErrorReportBody {
@@ -70,7 +70,6 @@ export async function reportError(message: string): Promise<void> {
 }
 
 export function reportErrorWithToast(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     error: any,
     message: string,
     location: string

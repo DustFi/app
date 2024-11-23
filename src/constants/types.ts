@@ -15,14 +15,15 @@ export interface Balance {
 }
 
 export interface SwapOptions {
+    default_pay_token?: string;
+    default_receive_token?: string;
+    pin_tokens?: string[];
+    default_pay_amount?: string;
     ui_preferences?: {
         show_swap_details?: boolean;
         show_change_direction?: boolean;
         disable_provided_text?: boolean;
     };
-    lock_pay_token?: boolean;
-    lock_receive_token?: boolean;
-    lock_input?: boolean;
     slippage_tolerance?: number;
 }
 

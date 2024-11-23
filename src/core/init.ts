@@ -29,8 +29,8 @@ export async function init(debug: boolean): Promise<void> {
   });
 
   // Define components-related CSS variables.
-  await viewport.mount();
-  viewport.bindCssVars();
+  // await viewport.mount();
+  // viewport.bindCssVars();
   miniApp.bindCssVars();
   themeParams.bindCssVars();
 

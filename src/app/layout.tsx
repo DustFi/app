@@ -23,11 +23,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     <html lang={locale}>
       <body>
         <I18nProvider>
-          <Root>
-            <ClientLayout>
-              {children}
-            </ClientLayout>
-          </Root>
+          <div className='bg-gradient-to-tl from-gray-900 via-[#ff7b24] to-black'>
+            <Root>
+              <ClientLayout>
+                {children}
+              </ClientLayout>
+            </Root>
+          </div>
         </I18nProvider>
       </body>
     </html>

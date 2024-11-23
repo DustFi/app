@@ -1,101 +1,159 @@
-'use client';
+'use client'
 
-import { useEffect } from 'react';
-import { TonConnectButton } from '@tonconnect/ui-react';
-import { useSwapStore } from '@/store/useSwapStore';
-import { useWalletStore } from '@/store/useWalletStore';
-import { useOptionsStore } from '@/store/useOptionsStore';
-import { SwapCard } from '@/components/Swap/SwapCard';
-import { SwapDetails } from '@/components/Swap/SwapDetails';
-import { SwapButton } from '@/components/Swap/SwapButton';
-import { Card } from '@/components/ui/card';
-import { Toaster } from 'react-hot-toast';
-import { ErrorBoundary } from 'react-error-boundary';
+import { useState } from 'react'
+import { Address, toNano } from '@ton/core'
+import { Asset, VaultNative, PoolType, ReadinessStatus, Factory } from '@dedust/sdk'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { tonClient, factory } from '@/lib/dedust'
+import { useTonAddress } from '@tonconnect/ui-react';
+import { DeDustClient } from '@dedust/sdk';
+import SwapComponent from '@/components/Swap'
 
-export default function SwapPage() {
-    const { initializeApp, refetchBestRoute } = useSwapStore();
-    const { refetch: refetchBalance } = useWalletStore();
-    const { options } = useOptionsStore();
+export default function TonScaleSwap() {
+    const userAddress = useTonAddress();
+    const rawUserAddress = useTonAddress(false);
+    const [amount, setAmount] = useState('')
+    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+    const [message, setMessage] = useState('')
+    const [allPools, setAllPools] = useState<any[]>([])
 
-    // Initialize the app and set up polling
-    useEffect(() => {
-        let refetchInterval: NodeJS.Timeout;
+    const dedustClient = new DeDustClient({ endpointUrl: 'https://api.dedust.io' });
 
-        const initialize = async () => {
-            await initializeApp();
-            // Set up polling for price updates
-            refetchInterval = setInterval(() => {
-                refetchBestRoute();
-                refetchBalance();
-            }, 10000); // Poll every 10 seconds
-        };
+    const listAllPools = async () => {
+        const pools = await dedustClient.getPools();
+        // console.log('Pools:', pools);
+        setAllPools(pools);
+        return pools;
+    }
 
-        initialize();
+    listAllPools();
 
-        return () => {
-            if (refetchInterval) {
-                clearInterval(refetchInterval);
-            }
-        };
-    }, []);
+    // listAllPools gives array of pools in this format - {
+    //     "address": "EQAUlzQPu1QE7H9NiUIpsTOSq_OveXfeU8nLjFdGwOeBeGc6",
+    //     "lt": "47679934000001",
+    //     "totalSupply": "9000000000000001000",
+    //     "type": "volatile",
+    //     "tradeFee": "0.25",
+    //     "assets": [
+    //         {
+    //             "type": "native",
+    //             "metadata": {
+    //                 "name": "Toncoin",
+    //                 "symbol": "TON",
+    //                 "image": "https://assets.dedust.io/images/ton.webp",
+    //                 "decimals": 9
+    //             }
+    //         },
+    //         {
+    //             "type": "jetton",
+    //             "address": "EQCIzSUwVaYwuK0iFraED--8awETZVC9VyLVzsXV9COW1RLs",
+    //             "metadata": null
+    //         }
+    //     ],
+    //     "lastPrice": null,
+    //     "reserves": [
+    //         "56045095",
+    //         "82155766840929579571808"
+    //     ],
+    //     "stats": {
+    //         "fees": [
+    //             "0",
+    //             "0"
+    //         ],
+    //         "volume": [
+    //             "0",
+    //             "0"
+    //         ]
+    //     }
+    // }
+
+    // console.log('Pools:', listAllPools);
+
+    // const handleSwap = async () => {
+    //     setStatus('loading')
+    //     setMessage('')
+
+    //     try {
+    //         // Step 1: Find the Vault (TON)
+    //         const tonVault = tonClient.open(await factory.getNativeVault())
+
+    //         // Step 2: Find the Pool (TON, SCALE)
+    //         const SCALE_ADDRESS = Address.parse('EQBlqsm144Dq6SjbPI4jjZvA1hqTIP3CvHovbIfW_t-SCALE')
+    //         const TON = Asset.native()
+    //         const SCALE = Asset.jetton(SCALE_ADDRESS)
+    //         const pool = tonClient.open(await factory.getPool(PoolType.VOLATILE, [TON, SCALE]))
+
+    //         // Step 3: Check if Vault (TON) and Pool (TON, SCALE) are deployed
+    //         if ((await pool.getReadinessStatus()) !== ReadinessStatus.READY) {
+    //             throw new Error('Pool (TON, SCALE) does not exist.')
+    //         }
+
+    //         if ((await tonVault.getReadinessStatus()) !== ReadinessStatus.READY) {
+    //             throw new Error('Vault (TON) does not exist.')
+    //         }
+
+    //         // Step 4: Send a message to Vault (TON)
+    //         const amountIn = toNano(amount)
+    //         // @ts-ignore
+    //         const sender: Sender = { address: Address.parse(userAddress) } // Adjusted to match Sender type
+
+    //         await tonVault.sendSwap(sender, {
+    //             poolAddress: pool.address,
+    //             amount: amountIn,
+    //             gasAmount: toNano('0.25'),
+    //         })
+
+    //         setStatus('success')
+    //         setMessage(`Successfully swapped ${amount} TON to SCALE`)
+    //     } catch (error) {
+    //         setStatus('error')
+    //         console.log({ "error": error })
+    //         setMessage(error instanceof Error ? error.message : 'An unknown error occurred')
+    //     }
+    // }
 
     return (
-        <ErrorBoundary
-            fallback={
-                <div className="flex items-center justify-center min-h-screen">
-                    <Card className="p-6 max-w-md w-full">
-                        <h2 className="text-xl font-semibold text-red-500 mb-2">
-                            Something went wrong
-                        </h2>
-                        <p className="text-gray-600">
-                            Please refresh the page and try again.
-                        </p>
-                    </Card>
-                </div>
-            }
-        >
-            <div className="min-h-screen bg-gray-50">
-                <div className="container mx-auto px-4 py-8 max-w-2xl">
-                    {/* Header */}
-                    <div className="flex justify-between items-center mb-8">
-                        <h1 className="text-2xl font-bold">Swap Tokens</h1>
-                        <TonConnectButton />
-                    </div>
-
-                    {/* Main Content */}
-                    <div className="space-y-4">
-                        <SwapCard />
-                        {options.ui_preferences?.show_swap_details && <SwapDetails />}
-                        <SwapButton />
-                    </div>
-
-                    {/* Footer */}
-                    {!options.ui_preferences?.disable_provided_text && (
-                        <div className="mt-8 text-center text-sm text-gray-500">
-                            Service provided by{' '}
-                            <a
-                                href="https://mytonswap.com"
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-blue-500 hover:text-blue-600"
-                            >
-                                MyTonSwap
-                            </a>
-                        </div>
-                    )}
-                </div>
-
-                <Toaster
-                    position="bottom-right"
-                    toastOptions={{
-                        duration: 5000,
-                        style: {
-                            background: 'var(--background-color)',
-                            color: 'var(--text-black-color)',
-                        },
-                    }}
-                />
+        <div className='flex h-screen p-10'>
+            <div className='flex h-screen p-10'>
+                <SwapComponent />
             </div>
-        </ErrorBoundary>
-    );
+            {/* <Card className="w-[600px] h-[500px]">
+
+                <CardHeader>
+                    <CardTitle>Swap TON to SCALE</CardTitle>
+                    <CardDescription>Enter the amount of TON you want to swap</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                        <Input
+                            type="number"
+                            placeholder="Amount of TON"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                        />
+                        <Button onClick={handleSwap} disabled={status === 'loading'}>
+                            {status === 'loading' ? 'Swapping...' : 'Swap'}
+                        </Button>
+                        {status === 'success' && (
+                            <Alert>
+                                <AlertTitle>Success</AlertTitle>
+                                <AlertDescription>{message}</AlertDescription>
+                            </Alert>
+                        )}
+                        {status === 'error' && (
+                            <Alert variant="destructive">
+                                <AlertTitle>Error</AlertTitle>
+                                <AlertDescription>{message}</AlertDescription>
+                            </Alert>
+                        )}
+                    </div>
+                </CardContent>
+            </Card> */}
+        </div>
+
+    )
 }
+

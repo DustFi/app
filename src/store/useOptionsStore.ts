@@ -11,6 +11,10 @@ interface OptionsState {
 
 export const useOptionsStore = create<OptionsState>((set) => ({
     options: {
+        default_pay_token: undefined,
+        default_receive_token: undefined,
+        pin_tokens: [],
+        default_pay_amount: undefined,
         ui_preferences: {
             show_swap_details: true,
             show_change_direction: true,

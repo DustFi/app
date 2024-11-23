@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useSwapStore } from '@/store/useSwapStore';
 import { formatNumber } from '@/lib/format';
 import { Loader2Icon } from 'lucide-react';
+import { ModalState } from '@/constants/types';
 
 interface ConfirmationModalProps {
     onClose: () => void;

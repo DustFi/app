@@ -13,7 +13,7 @@ import { Factory, Asset, PoolType, ReadinessStatus, MAINNET_FACTORY_ADDR } from 
 
 interface CreateFormProps {
     tonClient: any;
-    factory: Factory;
+    factory: any;
 }
 
 const CreateForm: React.FC<CreateFormProps> = ({ tonClient, factory }) => {
@@ -41,13 +41,14 @@ const CreateForm: React.FC<CreateFormProps> = ({ tonClient, factory }) => {
 
                 console.log("Asset:", asset);
                 // await factory.sendCreateVault(sender, { asset });
+                // @ts-ignore
                 const response = await factory.sendCreateVault(tonClient, Sender, { asset });
                 console.log("Vault created successfully!", response);
                 setStatus({ type: 'success', message: 'Vault created successfully!' });
             } catch (error) {
                 console.error('Error creating vault:', error);
-                setStatus({ type: 'error', message: error?.message });
-
+                const errorMessage = (error as { message?: string })?.message || 'Unknown error';
+                setStatus({ type: 'error', message: `Error creating vault: ${errorMessage}` });
             }
         } catch (error: any) {
             setStatus({ type: 'error', message: error.message });
@@ -61,10 +62,12 @@ const CreateForm: React.FC<CreateFormProps> = ({ tonClient, factory }) => {
         try {
             setIsLoading(true);
             const TON = Asset.native();
+            // @ts-ignore
             const SCALE = Asset.jetton(jettonAddress);
 
             console.log("ton", TON, "scale", SCALE);
             const pool = tonClient.open(
+                            // @ts-ignore
                 await factory.getPool(PoolType.VOLATILE, [TON, SCALE])
             );
             console.log("pool", pool);
@@ -72,6 +75,7 @@ const CreateForm: React.FC<CreateFormProps> = ({ tonClient, factory }) => {
             const poolReadiness = await pool.getReadinessStatus();
 
             if (poolReadiness === ReadinessStatus.NOT_DEPLOYED) {
+                            // @ts-ignore
                 await factory.sendCreateVolatilePool(userAddress, {
                     assets: [TON, SCALE],
                 });
@@ -168,6 +172,7 @@ export default function CreatePage() {
     return (
         <div className="min-h-screen py-8">
             <h1 className="text-3xl font-bold text-center mb-8">Create Vault or Pool</h1>
+            {/* @ts-ignore  */}
             <CreateForm
                 tonClient={tonClient}
                 factory={factory}
